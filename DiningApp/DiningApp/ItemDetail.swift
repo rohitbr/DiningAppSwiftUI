@@ -10,6 +10,9 @@ import SwiftUI
 
 struct ItemDetail: View {
     @EnvironmentObject var order : Order
+    @State private var showingAlert = false
+    @State private var orderPlaced = false
+
     var item : MenuItem
     var body: some View {
         VStack {
@@ -27,11 +30,17 @@ struct ItemDetail: View {
 
             Button("Order this") {
                 self.order.add(item: self.item)
+                self.showingAlert = true
+                self.orderPlaced = true
             }
+            .disabled(orderPlaced)
             .padding()
             .font(.headline)
             .foregroundColor(Color.white)
-            .background(Color.black)
+            .background(orderPlaced ? .gray : Color.black)
+            .alert(isPresented: $showingAlert) {
+                Alert(title: Text("Added to Cart"), message: Text("Your order is added to cart"), dismissButton: .default(Text("Ok")))
+            }
             Spacer()
         }.navigationBarTitle(Text(item.name), displayMode: .inline)
     }
